@@ -1,0 +1,108 @@
+
+<!DOCTYPE html>
+<html lang="no">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kidnappe-spillet</title>
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            background-color: black;
+            color: white;
+            font-family: Arial, sans-serif;
+        }
+        #loadingScreen {
+            position: fixed;
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #000;
+            color: white;
+            font-size: 2rem;
+        }
+        #gameCanvas {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+        }
+        #message {
+            position: absolute;
+            bottom: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.7);
+            padding: 10px;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+
+<div id="loadingScreen">
+    Laget av Nova Studios
+</div>
+
+<canvas id="gameCanvas" width="800" height="600"></canvas>
+<div id="message"></div>
+
+<script>
+    let loadingScreen = document.getElementById('loadingScreen');
+    let gameCanvas = document.getElementById('gameCanvas');
+    let message = document.getElementById('message');
+    let ctx = gameCanvas.getContext('2d');
+
+    // Timer for loading screen
+    let messageTime = 60000; // 1 minute in milliseconds
+    let loadingTime = 120000; // 2 minutes in milliseconds
+
+    // Switch the message after 1 minute
+    setTimeout(() => {
+        loadingScreen.textContent = "Hjulpet av Geir Studios";
+    }, messageTime);
+
+    // Show the game after 2 minutes
+    setTimeout(() => {
+        loadingScreen.style.display = 'none';
+        gameCanvas.style.display = 'block';
+        startGame();
+    }, loadingTime);
+
+    function startGame() {
+        let player = { x: 400, y: 300, size: 20, color: 'red' };
+        let keys = {};
+
+        document.addEventListener('keydown', (e) => { keys[e.key] = true; });
+        document.addEventListener('keyup', (e) => { keys[e.key] = false; });
+
+        function update() {
+            if (keys['ArrowUp']) player.y -= 5;
+            if (keys['ArrowDown']) player.y += 5;
+            if (keys['ArrowLeft']) player.x -= 5;
+            if (keys['ArrowRight']) player.x += 5;
+        }
+
+        function draw() {
+            ctx.clearRect(0, 0, gameCanvas.width, gameCanvas.height);
+            ctx.fillStyle = player.color;
+            ctx.fillRect(player.x, player.y, player.size, player.size);
+        }
+
+        function gameLoop() {
+            update();
+            draw();
+            requestAnimationFrame(gameLoop);
+        }
+
+        message.textContent = "Bruk piltastene for å bevege deg!";
+        gameLoop();
+    }
+</script>
+
+</body>
+</html>
